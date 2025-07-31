@@ -23,7 +23,7 @@ For API documentation and FAQs, see:
 
 
 
-### Version 0.1.0
+### Version 0.2.0
 
 The **esios2fd** package supports three main workflows:
 
@@ -49,23 +49,17 @@ For more details, visit the [website](https://moviedo5.github.io/esios2fd) of th
 
 ## Installation
 
-
-- If you downloaded it manually:
+You can install the pre-built Windows binary directly from the GitHub Pages site:
 
 ```r
-install.packages("path/to/zip/esios2fd_0.2.0.zip",
-                 repos = NULL, type = "win.binary")
-```                       
-
-- Or install directly from GitHub:
-```r
-remotes::install_github(
-  "moviedo5/esios2fd-site",
-  subdir = ".",
-  repos   = NULL,
-  type    = "win.binary"
+install.packages(
+  "https://github.com/moviedo5/esios2fda-site/raw/main/esios2fd_0.2.0.zip",
+  repos = NULL,
+  type  = "win.binary"
 )
- ```                       
+```
+
+        
                         
 
 
