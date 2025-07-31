@@ -93,7 +93,7 @@
 </ul>
 </li>
 </ol>
-<p>For more details, visit <a href="https://moviedo5.github.io/esios2fda-site">https://moviedo5.github.io/esios2fda-site</a> of the package.</p>
+<p>For more details, visit the <a href="https://moviedo5.github.io/esios2fd">website</a> of the package.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -105,11 +105,15 @@
 <span>  repos <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type  <span class="op">=</span> <span class="st">"win.binary"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>You can install last version from the GitHub Pages site (if it is available):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"moviedo5/esios2fd"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fist-setps">Fist setps<a class="anchor" aria-label="anchor" href="#fist-setps"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://moviedo5.github.io/esios2fd">esios2fd</a></span><span class="op">)</span></span>
 <span><span class="va">api_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"ESIOS_API_KEY"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -118,7 +122,7 @@
 <a class="anchor" aria-label="anchor" href="#example-on-the-fly-query-with-esios2lfdata"></a>
 </h2>
 <p>Fetch a combined daily <code>ldata</code> for Forecasted demand (MWh) and Scheduled demand (MWh) between two dates. Use resolution = “1hour” to match the default one hour granularity:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Real_demand_1293"</span>,<span class="st">"Forecasted_demand_544"</span>, <span class="st">"Scheduled_demand_545"</span><span class="op">)</span></span>
 <span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/esios2lfdata.html">esios2lfdata</a></span><span class="op">(</span></span>
 <span>  var_names   <span class="op">=</span> <span class="va">vars</span>,</span>
@@ -133,7 +137,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out1</span><span class="op">$</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out1</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13e4</span>,<span class="fl">4e5</span><span class="op">)</span>, ylab<span class="op">=</span><span class="st">"MWh"</span><span class="op">)</span></span></code></pre></div>
 <p>For these indicators, the resolution can be increased to 5 minutes (the execution of the following code is not shown):</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#vars &lt;- c("Forecasted_demand_544", "Scheduled_demand_545")</span></span>
 <span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/esios2lfdata.html">esios2lfdata</a></span><span class="op">(</span></span>
 <span>  var_names   <span class="op">=</span> <span class="va">vars</span>,</span>
@@ -144,7 +148,11 @@
 <span>  verbose     <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out2</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e4</span>,<span class="fl">35e3</span><span class="op">)</span>, ylab<span class="op">=</span><span class="st">"MWh"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Error in knitr::include_graphics("docs/figures/apagon2025.png"): Cannot find the file(s): "docs/figures/apagon2025.png"</span></span></code></pre>
+<div class="figure">
+<img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%"><p class="caption">
+Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025
+</p>
+</div>
 <!--
 Solar_PV_542    Solar PV generation forecast    MWh 0   0   0   1   0   1   0   0
 Solar_thermal_543   Solar thermal forecast  MWh     0   0   0   1   0   1   0   0
@@ -167,7 +175,7 @@ for (i in 1:length(ldata))
     plot(ldata[[i]])
 
 
-![Forecasted vs. Scheduled Demand\nIberian Blackout April 28 2025](figures/apagon2025.png)
+![Forecasted vs. Scheduled Demand\nIberian Blackout April 25-28 2025](figures/apagon2025.png)
 
 <img src="figures/apagon2025.png" width="100%" />
 -->
@@ -334,34 +342,6 @@ R CMD INSTALL esios2fd_0.2.0.tar.gz --build
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
 <p>This work was supported by grants from MICINN and the Xunta de Galicia (ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.</p>
-<!--
-# install.packages("roxygen2")
-# install.packages("devtools")
-# install.packages("pkgdown")
-
-library(roxygen2)
-library(devtools)
-# setwd("D:/Users/moviedo/github/fda.usc/")
-
-pkgbuild::compile_dll()
-#roxygenize()
-devtools::document()
-1
-
-tools::checkRd("man/esios2df.Rd")
-tools::checkRd("man/esios2indicators.Rd")
-tools::checkRd("man/esios2lfdata.Rd")
-tools::checkRd("man/esios2csv.Rd")
-tools::checkRd("man/esios2ldata.Rd")
-tools::checkRd("man/esios2fdata.Rd")
-
-
-library(devtools)
-# devtools::build()
-
-
-knitr::knit("README.Rmd", output = "README.md")
--->
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
