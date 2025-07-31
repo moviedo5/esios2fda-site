@@ -49,27 +49,10 @@ For more details, visit the [website](https://moviedo5.github.io/esios2fd) of th
 
 ## Installation
 
-
-- If you downloaded it manually:
-
 ```r
-install.packages("path/to/zip/esios2fd_0.2.0.zip",
-                 repos = NULL, type = "win.binary")
-```                       
-
-- Or install directly from GitHub:
-```r
-remotes::install_github(
-  "moviedo5/esios2fd-site",
-  subdir = ".",
-  repos   = NULL,
-  type    = "win.binary"
-)
- ```                       
-                        
-
-
-
+# install.packages("remotes")
+remotes::install_github("moviedo5/esios2fd")
+```
 
 ## Fist setps
 
@@ -272,9 +255,9 @@ devtools::install()
 # devtools::install_github("moviedo5/fda.usc",auth_user="moviedo5")
 R CMD check --as-cran and R-wind-builder 
  
-R CMD build esios2fd
-R CMD check esios2fd_0.2.0.tar --as-cran  R-wind-builder 
-R CMD INSTALL esios2fd_0.2.0.tar.gz --build
+R CMD build fda.usc
+R CMD check fda.usc_2.2.0.tar.gz --as-cran  R-wind-builder 
+R CMD INSTALL fda.usc_2.2.0.tar.gz --build
 
 -->
 
@@ -319,34 +302,6 @@ to Functional Data*. R package version 0.1.0.
 This work was supported by grants from MICINN and the Xunta de Galicia (ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.
 
 
-<!-- 
-# install.packages("roxygen2")
-# install.packages("devtools")
-# install.packages("pkgdown")
-
-library(roxygen2)
-library(devtools)
-# setwd("D:/Users/moviedo/github/fda.usc/")
-
-pkgbuild::compile_dll()
-#roxygenize()
-devtools::document()
-1
-
-tools::checkRd("man/esios2df.Rd")
-tools::checkRd("man/esios2indicators.Rd")
-tools::checkRd("man/esios2lfdata.Rd")
-tools::checkRd("man/esios2csv.Rd")
-tools::checkRd("man/esios2ldata.Rd")
-tools::checkRd("man/esios2fdata.Rd")
-
-
-library(devtools)
-# devtools::build()
-
-
-knitr::knit("README.Rmd", output = "README.md")
--->
 ## References
 
 * Febrero-Bande, M. and Oviedo de la Fuente, M. (2012). Statistical Computing in Functional Data Analysis: The R Package fda.usc. *Journal of Statistical Software*, 51(4):1–28. [https://doi.org/10.18637/jss.v051.i04](https://doi.org/10.18637/jss.v051.i04)
