@@ -23,7 +23,7 @@ For API documentation and FAQs, see:
 
 
 
-### Version 0.2.0
+### Version 0.1.0
 
 The **esios2fd** package supports three main workflows:
 
@@ -122,8 +122,8 @@ plot(out2, ylim=c(1e4,35e3), ylab="MWh")
 ```
 
 <div class="figure">
-<img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025" width="100%" />
-<p class="caption">Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025</p>
+<img src="docs/figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%" />
+<p class="caption">Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025</p>
 </div>
 
 <!--
