@@ -93,14 +93,18 @@
 </ul>
 </li>
 </ol>
-<p>For more details, visit the <a href="https://moviedo5.github.io/esios2fd">website</a> of the package.</p>
+<p>For more details, visit <a href="https://moviedo5.github.io/esios2fda-site">https://moviedo5.github.io/esios2fda-site</a> of the package.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>You can install the pre-built Windows binary directly from the GitHub Pages site:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"moviedo5/esios2fd"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="st">"https://github.com/moviedo5/esios2fda-site/raw/main/esios2fd_0.2.0.zip"</span>,</span>
+<span>  repos <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type  <span class="op">=</span> <span class="st">"win.binary"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fist-setps">Fist setps<a class="anchor" aria-label="anchor" href="#fist-setps"></a>
@@ -140,11 +144,7 @@
 <span>  verbose     <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out2</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e4</span>,<span class="fl">35e3</span><span class="op">)</span>, ylab<span class="op">=</span><span class="st">"MWh"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025" width="100%"><p class="caption">
-Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025
-</p>
-</div>
+<pre><code><span><span class="co">## Error in knitr::include_graphics("docs/figures/apagon2025.png"): Cannot find the file(s): "docs/figures/apagon2025.png"</span></span></code></pre>
 <!--
 Solar_PV_542    Solar PV generation forecast    MWh 0   0   0   1   0   1   0   0
 Solar_thermal_543   Solar thermal forecast  MWh     0   0   0   1   0   1   0   0
@@ -177,7 +177,7 @@ for (i in 1:length(ldata))
 <a class="anchor" aria-label="anchor" href="#example-annual-download-workflow-with-esios2csv"></a>
 </h2>
 <p>This code downloads ESIOS indicator data year by year, convert it into functional data, and enrich the resulting <code>ldata$df</code> with calendar attributes using <code><a href="reference/date2calendar.html">date2calendar()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Solar_PV_542"</span>,<span class="st">"Solar_543"</span><span class="op">)</span></span>
 <span><span class="va">years</span> <span class="op">&lt;-</span> <span class="fl">2022</span><span class="op">:</span><span class="fl">2023</span></span>
 <span></span>
@@ -237,7 +237,7 @@ for (i in 1:length(ldata))
 <h3 id="indicator-catalog">Indicator Catalog<a class="anchor" aria-label="anchor" href="#indicator-catalog"></a>
 </h3>
 <p>Retrieve metadata and resolution flags:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/esios2indicators.html">esios2indicators</a></span><span class="op">(</span><span class="va">api_key</span>, output_dir <span class="op">=</span> <span class="st">"data_indicators"</span><span class="op">)</span></span>
 <span><span class="va">res</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/esios2resolution.html">esios2resolution</a></span><span class="op">(</span><span class="va">inds</span>, <span class="va">api_key</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
@@ -283,9 +283,9 @@ devtools::install()
 # devtools::install_github("moviedo5/fda.usc",auth_user="moviedo5")
 R CMD check --as-cran and R-wind-builder
 
-R CMD build fda.usc
-R CMD check fda.usc_2.2.0.tar.gz --as-cran  R-wind-builder
-R CMD INSTALL fda.usc_2.2.0.tar.gz --build
+R CMD build esios2fd
+R CMD check esios2fd_0.2.0.tar --as-cran  R-wind-builder
+R CMD INSTALL esios2fd_0.2.0.tar.gz --build
 
 -->
 </div>
@@ -334,6 +334,34 @@ R CMD INSTALL fda.usc_2.2.0.tar.gz --build
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
 <p>This work was supported by grants from MICINN and the Xunta de Galicia (ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.</p>
+<!--
+# install.packages("roxygen2")
+# install.packages("devtools")
+# install.packages("pkgdown")
+
+library(roxygen2)
+library(devtools)
+# setwd("D:/Users/moviedo/github/fda.usc/")
+
+pkgbuild::compile_dll()
+#roxygenize()
+devtools::document()
+1
+
+tools::checkRd("man/esios2df.Rd")
+tools::checkRd("man/esios2indicators.Rd")
+tools::checkRd("man/esios2lfdata.Rd")
+tools::checkRd("man/esios2csv.Rd")
+tools::checkRd("man/esios2ldata.Rd")
+tools::checkRd("man/esios2fdata.Rd")
+
+
+library(devtools)
+# devtools::build()
+
+
+knitr::knit("README.Rmd", output = "README.md")
+-->
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
