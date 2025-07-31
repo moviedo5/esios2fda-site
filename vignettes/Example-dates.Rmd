@@ -1,0 +1,109 @@
+---
+title: "Create functional data by date range"
+author: "Manuel Oviedo [manuel.oviedo@udc.es](mailto:manuel.oviedo@udc.es)"
+date: "`r Sys.Date()`"
+output:
+rmarkdown::html_vignette:
+toc: true
+number_sections: true
+df_print: paged
+vignette:
+id: example-dates
+package: esios2fd
+engine: knitr::rmarkdown
+encoding: UTF-8
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width  = 7,
+  fig.height = 4,
+  collapse   = TRUE,
+  comment    = "#>",
+  message    = FALSE,
+  warning    = FALSE
+)
+library(esios2fd)
+```
+
+# Example: Create Functional Data by Date Range
+
+This example demonstrates how to fetch a date-time range of ESIOS indicator data
+into a data frame, and then convert it into daily functional data (\code{ldata}).
+
+## 1. Parameters
+
+```r
+api_key <- Sys.getenv("ESIOS_API_KEY")
+start   <- "2022-01-01"
+end     <- "2022-01-15"
+```
+
+## 2. Fetch Into Data Frame
+
+Use \code{esios2df()} to download and align the series to hourly timestamps:
+
+```r
+df_hourly <- esios2df(
+  var_names  = vars,
+  start_date = start,
+  end_date   = end,
+  api_key    = api_key,
+  resolution = "hour",
+  verbose    = TRUE
+)
+head(df_hourly)
+par(mfrow=c(1,1))
+df1 <- df_hourly[df_hourly$var_name=="Onshore_wind_117",]
+plot(df1$datetime, df1$value, col = 2, type="l",
+     main = "Hourly Solar Profile", xlab = "Date-Time", ylab = "Value") 
+df2 <- df_hourly[df_hourly$var_name =="wind_power_generation_forecast_541",]
+lines(df2$datetime, df2$value, type = "l", col=4)
+      
+```
+
+## 3. Convert to Daily Functional Data
+
+Now build an \code{ldata} object where each row is a day and columns are hours:
+
+```r
+ldata_hourly <- esios2lfdata(
+  var_names  = vars,
+  start_date = start,
+  end_date   = end,
+  api_key    = api_key,
+  resolution = "hour",
+  verbose    = FALSE
+)
+plot(ldata_hourly$Wind_551, main = "Wind: Daily Hourly Curves")
+```
+
+## 4. Changing Resolution to 10-Minute
+
+To illustrate resolution change, fetch at 10-min intervals:
+
+```r
+vars <- c("Wind_551")
+
+df_10min <- esios2df(
+  var_names  = vars,
+  start_date = start,
+  end_date   = end,
+  api_key    = api_key,
+  resolution = "min",
+  verbose    = TRUE
+)
+# Note: this may skip variables without 10-min data
+
+# Convert to ldata
+ldata_10min <- esios2lfdata(
+  var_names  = vars,
+  start_date = start,
+  end_date   = end,
+  api_key    = api_key,
+  resolution = "min",
+  verbose    = FALSE
+)
+plot(ldata_10min$Onshore_wind_117, main = "Wind: Daily 10-min Curves")
+```
+

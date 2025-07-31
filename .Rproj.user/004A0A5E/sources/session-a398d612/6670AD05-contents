@@ -1,0 +1,107 @@
+#' @encoding UTF-8
+#' @title Load ESIOS ldata via esios2df and build daily curves into \code{ldata} object
+#' @description
+#'   Uses \code{esios2df()} to fetch raw ESIOS time-series for a specified date range,
+#'   then assembles a single \code{ldata} list: common metadata (daily index, date, leap, dst)
+#'   and one \code{fdata} per variable where each row is a day and columns its hourly or 10-min curve.
+#' @param var_names    Character vector of indicators in "ShortName_ID" format.
+#' @param start_date   String "YYYY-MM-DD" defining interval start (Europe/Madrid).
+#' @param end_date     String "YYYY-MM-DD" defining interval end (Europe/Madrid).
+#' @param api_key      Your personal ESIOS API key.
+#' @param resolution   "hour" (24pt/day) or "min" (144pt/day of 10-min) resolution.
+#' @param verbose      Logical; if TRUE, prints progress messages.
+#' @param encoding     JSON encoding for API responses (default "UTF-8").
+#' @return A \code{ldata} list: element \code{df} is a data.frame with columns \code{index}, \code{date}, \code{leap}, \code{dst},
+#'   followed by each indicator's \code{fdata} daily curves.
+#' @importFrom lubridate ymd yday hour minute leap_year dst with_tz date
+#' @importFrom dplyr filter mutate
+#' @importFrom rlang .data
+#' @importFrom stats xtabs
+#' @importFrom fda.usc fdata
+#' @export
+esios2lfdata <- function(var_names,
+                         start_date,
+                         end_date,
+                         api_key,
+                         resolution = c("hour","min"),
+                         verbose = FALSE,
+                         encoding = "UTF-8") {
+  resolution <- match.arg(resolution)
+  tz <- "Europe/Madrid"
+  
+  # Build metadata
+  d0 <- as.Date(start_date, tz = tz)
+  d1 <- as.Date(end_date, tz = tz)
+  days <- seq(d0, d1, by = "day")
+  nD <- length(days)
+  leap <- as.integer(lubridate::leap_year(days))
+  noon <- as.POSIXct(paste(days, "12:00:00"), tz = tz)
+  dst <- c(0, diff(as.integer(lubridate::dst(noon))))
+  df <- data.frame(index = seq_len(nD), date = days, leap = leap, dst = dst)
+  
+  # Setup slots
+  if (resolution == "min") {
+    slots <- 144
+    argvals <- seq(0, 143)/144 * 24
+  } else {
+    slots <- 24
+    argvals <- seq(0.5, 23.5, length.out = 24)
+  }
+  
+  # Fetch long format
+  ts_long <- suppressMessages(suppressWarnings(
+    esios2df(var_names, start_date, end_date, api_key,
+             resolution, verbose = FALSE, encoding)
+  ))
+  
+  out <- list(df = df)
+  for (var in var_names) {
+    # If no rows for this variable, warn and skip
+    if (! var %in% ts_long$var_name) {
+      warning(sprintf(
+        "Variable '%s' has no data at the requested resolution; its values are omitted.",
+        var
+      ))
+      next
+    }
+    
+    sub <- ts_long %>%
+      filter(.data$var_name == var) %>%
+      mutate(
+        day_i = match(as.Date(.data$datetime, tz = tz), days),
+        slot  = if (resolution == "min") {
+          hour(.data$datetime) * 6 + minute(.data$datetime) / 10 + 1
+        } else {
+          hour(.data$datetime) + 1
+        }
+      )
+    
+    # Initialize matrix
+    m <- matrix(NA_real_, nrow = nD, ncol = slots)
+    ok <- which(!is.na(sub$day_i) & sub$slot >= 1 & sub$slot <= slots)
+    m[cbind(sub$day_i[ok], sub$slot[ok])] <- sub$value[ok]
+    
+    # Smooth DST/leap columns
+    pos <- if (resolution == "min") 13 else 3
+    while (ncol(m) < slots) {
+      lo <- m[, pos - 1]; hi <- m[, pos]
+      m <- cbind(m[, 1:(pos - 1)], (lo + hi)/2, m[, pos:ncol(m)])
+    }
+    while (ncol(m) > slots) {
+      m[, pos] <- (m[, pos] + m[, pos + 1]) / 2
+      m <- m[, - (pos + 1)]
+    }
+    
+    out[[var]] <- fda.usc::fdata(
+      m, argvals,
+      names = list(
+        main = var,
+        xlab = if (resolution == "min") "10-min" else "Hour",
+        ylab = "Value"
+      )
+    )
+  }
+  
+  class(out) <- c("ldata", "list")
+  out
+}

@@ -1,0 +1,99 @@
+---
+title: "Combine Functional Data by Years with Calendar Annotations"
+author: "Manuel Oviedo [manuel.oviedo@udc.es](mailto:manuel.oviedo@udc.es)"
+date: "`r Sys.Date()`"
+output:
+rmarkdown::html_vignette:
+toc: true
+number_sections: true
+df_print: paged
+vignette:
+id: example-years
+package: esios2fd
+engine: knitr::rmarkdown
+encoding: UTF-8
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width  = 7,
+  fig.height = 4,
+  collapse   = TRUE,
+  comment    = "#>",
+  message    = FALSE,
+  warning    = FALSE
+)
+library(esios2fd)
+```
+
+# Example: Combine Functional Data by Years with Calendar Annotations
+
+This vignette demonstrates how to download ESIOS indicator data year by year,
+convert it into functional data, and enrich the resulting `ldata$df` with calendar attributes using `date2calendar()`.
+
+## 1. Parameters
+
+```r
+api_key <- Sys.getenv("ESIOS_API_KEY")
+vars    <- c("Wind_551", "Solar_PV_119")
+years   <- 2020:2021
+```
+
+## 2. Download CSVs and Create Functional Data Objects
+
+```r
+# Download 10-minute CSVs for each year
+esios2csv(
+  var_names  = vars,
+  years      = years,
+  api_key    = api_key,
+  resolution = "min",
+  output_dir = "data_csv",
+  verbose    = TRUE
+)
+
+# Convert CSVs into fdata objects
+esios2fdata(
+  var_names  = vars,
+  years      = years,
+  resolution = "min",
+  input_dir  = "data_csv",
+  output_dir = "data_rda",
+  mode       = "csv",
+  verbose    = TRUE
+)
+```
+
+## 3. Combine into `ldata` and Annotate Calendar Data
+
+```r
+# Combine all variables into an 'ldata' object
+ldata <- esios2ldata(
+  years      = years,
+  var_names  = vars,
+  resolution = "min",
+  input_dir  = "data_rda",
+  mode       = "rda",
+  verbose    = FALSE
+)
+
+# Enrich the 'df' component with calendar attributes
+calendar_df <- date2calendar(
+  ldata$df,
+  tz         = "Europe/Madrid",
+  components = c("year","month","day_of_week","laborable")
+)
+
+# View the first rows of the annotated calendar data
+head(calendar_df)
+```
+
+## 4. Plot Daily Curves
+
+```r
+# Plot daily 10-minute curves for Wind_551
+plot(
+  ldata$Wind_551,
+  main = "Wind_551: Daily 10-min Curves (2020-2021)"
+)
+```

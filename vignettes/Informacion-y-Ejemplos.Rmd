@@ -1,0 +1,181 @@
+---
+title: "Uso práctico de la API de ESIOS con esios2fd"
+author: "Manuel Oviedo de la Fuente"
+output:
+  html_vignette:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Uso práctico de la API de ESIOS con esios2fd}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6, fig.height = 4
+)
+library(esios2fd)
+library(dplyr)
+library(lubridate)
+```
+
+# 1. Introducción y motivación
+
+En este documento repasamos un flujo de trabajo **práctico** con el paquete `esios2fd`:
+
+- ¿Cómo obtener y gestionar tu **clave de API** en ESIOS?
+- Descargar series de tiempo en distintas **resoluciones** (1min, 5min, 10min, 15min, 30min, hora).
+- Analizar el curioso **zigzag** que aparece en la resolución de 15 minutos.
+- Verificar consistencia agregando a paso horario.
+- Notas y recomendaciones para el uso futuro.
+
+<!--
+> **Nota:** A día de hoy, la interfaz web de ESIOS ofrece descargas hasta **10 minutos**,
+> pero la **API** entrega datos también cada 15 minutos (con máximos y mínimos alternando).
+-->
+
+### `r paste("Version", packageVersion("esios2fd"))`
+
+El paquete **esios2fd** ofrece tres grupos de funciones según el flujo de trabajo:
+
+1. **Gestión de indicadores**  
+   - `esios2indicators(api_key, output_dir, encoding)`  
+   - `esios2resolution(indicators, api_key, check_date, verbose, csv_file)`  
+   Estas funciones le permiten descargar y enriquecer el catálogo de indicadores de ESIOS, asignarles nombres limpios, unidades y detectar las resoluciones soportadas.
+
+2. **Descarga anual y transformación a datos funcionales**  
+   - `esios2csv(var_names, years, api_key, resolution, output_dir, verbose)`  
+     Descarga datos por variable y año en CSV (resolución "hour" o "min") y los guarda localmente.  
+   - `esios2fdata(var_names, years, resolution, input_dir, output_dir, mode, verbose)`  
+     Convierte esos CSV/RDA en objetos `fdata`, manejando automáticamente los saltos de horario.  
+   - `esios2ldata(years, var_names, resolution, input_dir, mode, output_dir, verbose)`  
+     Combina todo en un único objeto `ldata` con matriz diaria y curvas funcionales.
+
+3. **Consulta directa sin ficheros**  
+   - `esios2df(var_names, start_date, end_date, api_key, resolution, verbose, encoding)`  
+     Recupera datos “al vuelo” en un rango de fechas, devolviendo un `data.frame` con una fila por timestamp.  
+   - `esios2lfdata(var_names, start_date, end_date, api_key, resolution, mode, input_dir, output_dir, verbose)`  
+     Usa internamente `esios2df()` (o lee CSV/RDA) para generar un `ldata` único con matriz diaria y curvas, sin particionar por años.
+
+Para más información visita la [página web](https://moviedo5.github.io/esios2fd) del paquete.
+
+
+# 2. Configuración de la API
+
+Antes de empezar, necesitamos nuestra clave:
+
+1. Accede a https://www.esios.ree.es/es y registra/identifícate.
+2. Solicita un token personal desde tu perfil.
+3. Exporta la variable de entorno en tu sistema:
+
+```bash
+export ESIOS_API_KEY="TU_TOKEN"
+```
+
+En R:
+
+```r
+api_key <- Sys.getenv("ESIOS_API_KEY")
+```
+
+para más información consulta la [documentación de la API](https://api.esios.ree.es/doc/index.html).
+
+# 3. Descarga y visualización de 15 min
+
+Obtenemos la serie de **Emisiones de CO₂ en tiempo real** (ID 10355) para 2022:
+
+```{r zigzag-15min, eval=FALSE}
+var <- "Real_time_CO2_10355"
+df15 <- esios2csv(
+  var_names  = var,
+  years      = 2022,
+  api_key    = api_key,
+  resolution = "15min",
+  output_dir = "data_csv",
+  verbose    = TRUE
+) %>%
+  read.csv2(stringsAsFactors = FALSE)
+
+# Primeros valores
+head(df15)
+```
+
+> **Observación:** Verás alternancia clara entre valores altos y bajos en cada
+> segmento de 15 min.
+
+```{r plot-zigzag, echo=FALSE, fig.cap="Patrón zigzag en 15-min",eval=FALSE}
+# Ejemplo generado (suponiendo df15 cargado previamente)
+plot(x = ymd_hms(df15$instant), y = as.numeric(df15$val), type = 'l')
+```
+
+# 4. Agregar a hora y validar
+
+Sumamos bloques de 15 min para comparar con la descarga directa a hora:
+
+```{r agregacion, eval=FALSE}
+df_h15 <- df15 %>%
+  mutate(
+    time = ymd_hms(instant, tz = "Europe/Madrid"),
+    hour = floor_date(time, "hour")
+  ) %>%
+  group_by(hour) %>%
+  summarise(total15 = sum(as.numeric(val)))
+
+# Descarga horaria directa
+df1h <- esios2csv(
+  var_names  = var,
+  years      = 2022,
+  api_key    = api_key,
+  resolution = "hour",
+  output_dir = "data_csv",
+  verbose    = FALSE
+) %>%
+  read.csv2(stringsAsFactors = FALSE) %>%
+  transmute(
+    hour = ymd_hms(instant, tz = "Europe/Madrid"),
+    total1h = as.numeric(val)
+  )
+
+# Comprobación
+all.equal(df_h15$total15, df1h$total1h)
+```
+
+> El resultado es `TRUE`. Esto confirma que, pese al zigzag, la **agregación** recupera los totales horarios correctos.
+
+# 5. Origen y recomendaciones
+
+Es importante saber que la API en modo 15 min devuelve:
+
+- **`value`**: máximo o mínimo registrado en el intervalo, alternando.
+- **`max_value`** y **`min_value`**: verdaderos límites del intervalo.
+
+Si necesitamos un dato único uniforme, podemos:
+
+- Tomar la **media**: `(max_value + min_value)/2`.
+- Filtrar solo **máximos** o solo **mínimos**.
+- Usar resoluciones de **10 min**, que reflejan valores puntuales.
+
+> **Sugerencia futura:** incorporar al paquete una función que permita elegir
+> entre `value`, `max_value`, `min_value` o `mean` al convertir series de alta frecuencia.
+
+# 6. Próximos pasos
+
+- Cacheo local de CSVs de alta frecuencia para reducir llamadas repetidas.
+- Gráficos interactivos para explorar zigzag y transiciones DST.
+- Extender soporte a series de mercado intradiario de REE.
+
+# 7. Otra información de interés
+
+Desde la web de [rOpenSpain](https://ropenspain.es/paquetes/) se pueden consultar
+numerosos paquetes de R de interés, en particular [
+resios](https://github.com/rOpenSpain/resios) que descarga los datos de la Red 
+Eléctrica Española y del operador del sistema ('eSios') de Red Eléctrica.
+
+
+
+---
+
+*Vigneta generada en julio de 2025 — MIT License*

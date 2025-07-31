@@ -1,0 +1,11 @@
+pandoc: '3.4'
+pkgdown: 2.1.3
+pkgdown_sha: ~
+articles:
+  Example-dates: Example-dates.html
+  Example-years: Example-years.html
+  Informacion-y-Ejemplos: Informacion-y-Ejemplos.html
+last_built: 2025-07-30T14:38Z
+urls:
+  reference: https://moviedo5.github.io/esios2fd/reference
+  article: https://moviedo5.github.io/esios2fd/articles

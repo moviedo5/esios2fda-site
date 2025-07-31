@@ -1,0 +1,54 @@
+url: https://moviedo5.github.io/esios2fd
+
+home:
+  title: "esios2fd 0.1.0"
+  path: README.md
+
+template:
+  bootstrap: 5
+  params:
+    bootswatch: cerulean
+
+deploy:
+  install_metadata: true
+
+navbar:
+  left:
+    - text: "Examples"
+      href: articles/index.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+
+articles:
+  - title: "Examples (English)"
+    contents:
+      - Example-dates
+      - Example-years
+  - title: "Ejemplo (Spanish)"
+    contents:
+      - Informacion-y-Ejemplos
+
+reference:
+  - title: "On-the-Fly Query"
+    contents:
+      - esios2df
+      - esios2lfdata
+  - title: "Annual Download & Functional Datra Conversion"
+    contents:
+      - esios2csv
+      - esios2fdata
+      - esios2ldata
+  - title: "Information, Indicator Management and Calendar Utilities"
+    contents:
+      - esios2fd
+      - esios2indicators
+      - esios2resolution
+      - date2calendar
+
+news:
+  - path: NEWS.md
+  - cran_dates: false
+
+author: "Manuel Oviedo <manuel.oviedo@udc.es>"
