@@ -174,7 +174,7 @@ plot(out2, ylim=c(1e4,35e3), ylab="MWh")
 ```
 
 ```{r fig:blackout, echo=FALSE, out.width='100%', fig.cap="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025"}
-knitr::include_graphics("figures/apagon2025.png")
+knitr::include_graphics("docs/figures/apagon2025.png")
 ```
 
 <!--

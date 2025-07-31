@@ -118,7 +118,7 @@ plot(out2, ylim=c(1e4,35e3), ylab="MWh")
 ```
 
 <div class="figure">
-<img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%" />
+<img src="docs/figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%" />
 <p class="caption">Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025</p>
 </div>
 
