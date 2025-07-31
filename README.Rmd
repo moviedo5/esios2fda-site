@@ -53,7 +53,7 @@ The **esios2fd** package supports three main workflows:
    - `esios2resolution()`: Clean indicator names, assign units, and detect which time resolutions each supports.
 
 
-For more details, visit the [website](https://moviedo5.github.io/esios2fd) of the package.
+For more details, visit [https://moviedo5.github.io/esios2fda-site](https://moviedo5.github.io/esios2fda-site) of the package.
 
 
 ## Installation
