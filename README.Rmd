@@ -58,10 +58,16 @@ For more details, visit the [website](https://moviedo5.github.io/esios2fd) of th
 
 ## Installation
 
-```r
-# install.packages("remotes")
-remotes::install_github("moviedo5/esios2fd")
+
+```{r include=FALSE}
+# Create .nojekyll file in the /docs folder
+file.create('docs/.nojekyll')
+# Avoid Onedrive path issues
+# pkgdown::build_site()
+library(esios2fd)
 ```
+
+
 
 ## Fist setps
 
@@ -308,9 +314,9 @@ devtools::install()
 # devtools::install_github("moviedo5/fda.usc",auth_user="moviedo5")
 R CMD check --as-cran and R-wind-builder 
  
-R CMD build fda.usc
-R CMD check fda.usc_2.2.0.tar.gz --as-cran  R-wind-builder 
-R CMD INSTALL fda.usc_2.2.0.tar.gz --build
+R CMD build esios2fd
+R CMD check esios2fd_0.2.0.tar --as-cran  R-wind-builder 
+R CMD INSTALL esios2fd_0.2.0.tar.gz --build
 
 -->
 

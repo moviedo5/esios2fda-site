@@ -1,73 +1,66 @@
----
-output: github_document
----
-
 
 <!-- 
 README.md is generated from README.Rmd. 
 Please edit that file 
 -->
 
-
-
-
 # esios2fd: Download and Convert ESIOS Indicators to Functional Data
 
-The **esios2fd** package provides tools to download raw time-series indicator data from the Spanish Electricity Grid’s public ESIOS API ([https://www.esios.ree.es/](https://www.esios.ree.es/)) and transform it into functional data (`fdata`) objects and daily matrices (`ldata`) via the **fda.usc** framework.
+The **esios2fd** package provides tools to download raw time-series
+indicator data from the Spanish Electricity Grid’s public ESIOS API
+(<https://www.esios.ree.es/>) and transform it into functional data
+(`fdata`) objects and daily matrices (`ldata`) via the **fda.usc**
+framework.
 
 For API documentation and FAQs, see:
 
-- ESIOS API main site: [https://www.esios.ree.es/](https://www.esios.ree.es/)
-- FAQ: [https://www.esios.ree.es/es/ayuda-preguntas-frecuentes](https://www.esios.ree.es/es/ayuda-preguntas-frecuentes)
-
-
-
+- ESIOS API main site: <https://www.esios.ree.es/>
+- FAQ: <https://www.esios.ree.es/es/ayuda-preguntas-frecuentes>
 
 ### Version 0.2.0
 
 The **esios2fd** package supports three main workflows:
 
-1. **On-the-Fly Query**
+1.  **On-the-Fly Query**
 
-   - `esios2df()`: Fetch raw indicator data for any date-time range, returning a `data.frame` with one row per timestamp.
-   - `esios2lfdata()`: Build an `ldata` object directly from `esios2df()`, producing daily curves without intermediate files.
+    - `esios2df()`: Fetch raw indicator data for any date-time range,
+      returning a `data.frame` with one row per timestamp.
+    - `esios2lfdata()`: Build an `ldata` object directly from
+      `esios2df()`, producing daily curves without intermediate files.
 
-2. **Annual Download & Functional Conversion**
+2.  **Annual Download & Functional Conversion**
 
-   - `esios2csv()`: Download and save per-variable, per-year CSV files.
-   - `esios2fdata()`: Convert those CSVs into `fdata` objects (and optional RDA files), handling daylight-saving transitions.
-   - `esios2ldata()`: Merge all annual series into a single `ldata` object—one daily index plus functional data curves for each indicator.
+    - `esios2csv()`: Download and save per-variable, per-year CSV files.
+    - `esios2fdata()`: Convert those CSVs into `fdata` objects (and
+      optional RDA files), handling daylight-saving transitions.
+    - `esios2ldata()`: Merge all annual series into a single `ldata`
+      object—one daily index plus functional data curves for each
+      indicator.
 
-3. **Indicator Management**
+3.  **Indicator Management**
 
-   - `esios2indicators()`: Retrieve and cache the catalog of available ESIOS indicators.
-   - `esios2resolution()`: Clean indicator names, assign units, and detect which time resolutions each supports.
+    - `esios2indicators()`: Retrieve and cache the catalog of available
+      ESIOS indicators.
+    - `esios2resolution()`: Clean indicator names, assign units, and
+      detect which time resolutions each supports.
 
-
-For more details, visit the [website](https://moviedo5.github.io/esios2fd) of the package.
-
+For more details, visit the
+[website](https://moviedo5.github.io/esios2fd) of the package.
 
 ## Installation
 
-```r
-# install.packages("remotes")
-remotes::install_github("moviedo5/esios2fd")
-```
-
 ## Fist setps
 
-
-
-```r
+``` r
 library(esios2fd)
 api_key <- Sys.getenv("ESIOS_API_KEY")
 ```
 
 ## Example: On-the-Fly Query with `esios2lfdata()`
 
-Fetch a combined daily `ldata` for Forecasted demand	(MWh) and Scheduled demand	(MWh)
- between two dates. Use resolution = "1hour" to match the default one hour granularity:
-
+Fetch a combined daily `ldata` for Forecasted demand (MWh) and Scheduled
+demand (MWh) between two dates. Use resolution = “1hour” to match the
+default one hour granularity:
 
 ``` r
 vars <- c("Real_demand_1293","Forecasted_demand_544", "Scheduled_demand_545")
@@ -85,11 +78,8 @@ head(out1$df)
 plot(out1, ylim=c(13e4,4e5), ylab="MWh")
 ```
 
-
-
-
-For these indicators, the resolution can be increased to 5 minutes (the execution of the following code is not shown):
-
+For these indicators, the resolution can be increased to 5 minutes (the
+execution of the following code is not shown):
 
 ``` r
 #vars <- c("Forecasted_demand_544", "Scheduled_demand_545")
@@ -105,42 +95,43 @@ plot(out2, ylim=c(1e4,35e3), ylab="MWh")
 ```
 
 <div class="figure">
+
 <img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025" width="100%" />
-<p class="caption">Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025</p>
+<p class="caption">
+
+Forecasted vs. Scheduled Demand — Iberian Blackout April 28 2025
+</p>
+
 </div>
 
 <!--
-Solar_PV_542	Solar PV generation forecast 	MWh	0	0	0	1	0	1	0	0
-Solar_thermal_543	Solar thermal forecast	MWh 	0	0	0	1	0	1	0	0
-Forecasted_demand_544	Forecasted demand	MWh	    0	1	1	1	0	1	0	0
-Scheduled_demand_545	Scheduled demand	MWh	    0	1	1	1	0	1	0	0
-Hydro_546	Real time generation hydro	MWh	      0	1	1	1	0	1	0	0
-Coal_547	Real time generation coal	MWh	        0	1	1	1	0	1	0	0
-Fuel_gas_548	Real time generation fuel-gas	MWh	0	0	0	0	0	0	0	0
-Nuclear_549	Real time generation nuclear	MWh	  0	1	1	1	0	1	0	0
-Wind_551	Real time generation wind	MWh	        0	1	1	1	0	1	0	0
-Solar_552	Real time generation solar	MWh	      0	0	0	0	0	0	0	0
-Combined_cycle_GT_550	Real time generation C.C. GT	MWh	0	1	1	1	0	1	0	0
-
-
+Solar_PV_542    Solar PV generation forecast    MWh 0   0   0   1   0   1   0   0
+Solar_thermal_543   Solar thermal forecast  MWh     0   0   0   1   0   1   0   0
+Forecasted_demand_544   Forecasted demand   MWh     0   1   1   1   0   1   0   0
+Scheduled_demand_545    Scheduled demand    MWh     0   1   1   1   0   1   0   0
+Hydro_546   Real time generation hydro  MWh       0 1   1   1   0   1   0   0
+Coal_547    Real time generation coal   MWh         0   1   1   1   0   1   0   0
+Fuel_gas_548    Real time generation fuel-gas   MWh 0   0   0   0   0   0   0   0
+Nuclear_549 Real time generation nuclear    MWh   0 1   1   1   0   1   0   0
+Wind_551    Real time generation wind   MWh         0   1   1   1   0   1   0   0
+Solar_552   Real time generation solar  MWh       0 0   0   0   0   0   0   0
+Combined_cycle_GT_550   Real time generation C.C. GT    MWh 0   1   1   1   0   1   0   0
+&#10;
 vars <- c("Hydro_546","Coal_547","Nuclear_549",
           "Combined_cycle_GT_550","Wind_551","Solar_552")
-  
-par(mfrow=c(2,3))
+  &#10;par(mfrow=c(2,3))
 for (i in 1:length(ldata))
     plot(ldata[[i]])
-            
-
+            &#10;
 ![Forecasted vs. Scheduled Demand\nIberian Blackout April 28 2025](figures/apagon2025.png)
-
-<img src="figures/apagon2025.png" width="100%" />
+&#10;<img src="figures/apagon2025.png" width="100%" />
 -->
 
 ## Example: annual-download workflow with `esios2csv()`
 
 This code downloads ESIOS indicator data year by year, convert it into
-functional data, and enrich the resulting `ldata$df` with calendar attributes using `date2calendar()`.
-
+functional data, and enrich the resulting `ldata$df` with calendar
+attributes using `date2calendar()`.
 
 ``` r
 vars <- c("Solar_PV_542","Solar_543")
@@ -200,11 +191,9 @@ pal   <- colorRampPalette(c("blue", "yellow", "red", "yellow", "blue"))(365*2)
 plot(out4, col=pal[1:730])
 ```
 
-
-### Indicator Catalog 
+### Indicator Catalog
 
 Retrieve metadata and resolution flags:
-
 
 ``` r
 inds <- esios2indicators(api_key, output_dir = "data_indicators")
@@ -212,54 +201,45 @@ res  <- esios2resolution(inds, api_key, verbose = TRUE)
 head(res)
 ```
 
-**Note:** This may take a long time, as there are almost 2,000 indicators where their resolution is consulted.
+**Note:** This may take a long time, as there are almost 2,000
+indicators where their resolution is consulted.
 
 <!-- 
 # install.packages("roxygen2")
 # install.packages("devtools")
 # install.packages("pkgdown")
-
-library(roxygen2)
+&#10;library(roxygen2)
 library(devtools)
 # setwd("D:/Users/moviedo/github/fda.usc/")
-
-pkgbuild::compile_dll()
+&#10;pkgbuild::compile_dll()
 #roxygenize()
 devtools::document()
 1
-
-tools::checkRd("man/esios2df.Rd")
+&#10;tools::checkRd("man/esios2df.Rd")
 tools::checkRd("man/esios2indicators.Rd")
 tools::checkRd("man/esios2lfdata.Rd")
 tools::checkRd("man/esios2csv.Rd")
 tools::checkRd("man/esios2ldata.Rd")
 tools::checkRd("man/esios2fdata.Rd")
-
-
+&#10;
 library(devtools)
 # devtools::build()
-
-
+&#10;
 knitr::knit("README.Rmd", output = "README.md")
 library(pkgdown)
 #pkgdown::clean_site(force = TRUE)
 try(pkgdown::clean_site(force=TRUE), silent=TRUE)
 pkgdown::build_site()
-
-devtools::build()
+&#10;devtools::build()
 devtools::check()
 devtools::install()
-
-# devtools::build_win()
-
-# devtools::install_github("moviedo5/fda.usc",auth_user="moviedo5")
+&#10;# devtools::build_win()
+&#10;# devtools::install_github("moviedo5/fda.usc",auth_user="moviedo5")
 R CMD check --as-cran and R-wind-builder 
- 
-R CMD build fda.usc
-R CMD check fda.usc_2.2.0.tar.gz --as-cran  R-wind-builder 
-R CMD INSTALL fda.usc_2.2.0.tar.gz --build
-
--->
+ &#10;R CMD build esios2fd
+R CMD check esios2fd_0.2.0.tar --as-cran  R-wind-builder 
+R CMD INSTALL esios2fd_0.2.0.tar.gz --build
+&#10;-->
 
 # License
 
@@ -267,41 +247,49 @@ MIT + file LICENSE
 
 # Information download from API
 
-The new esios public website makes available of everybody an API for data download, which is detailed at https://api.esios.ree.es.
+The new esios public website makes available of everybody an API for
+data download, which is detailed at <https://api.esios.ree.es>.
 
 Calls displayed in this documentation are only examples.
 
-To use API you must request a personal token by mailing to consultasios@@ree.es, due to public current token changes often.
+To use API you must request a personal token by mailing to
+consultasios@@ree.es, due to public current token changes often.
 
 # API para descarga de información
-Este paquete cconsulta la API de esios (https://api.esios.ree.es), pra poder utilizar esta API el usuario debe solicitar su token personal enviando un correo indicando su nombre y apellidos a consultasios@ree.es.
 
-Todas las peticiones se realizan a la API de ESIOS. **Debe seguirse** estrictamente
-*las indicaciones oficiales de la API de REE*:
+Este paquete cconsulta la API de esios (<https://api.esios.ree.es>), pra
+poder utilizar esta API el usuario debe solicitar su token personal
+enviando un correo indicando su nombre y apellidos a
+<consultasios@ree.es>.
+
+Todas las peticiones se realizan a la API de ESIOS. **Debe seguirse**
+estrictamente *las indicaciones oficiales de la API de REE*:
 
 - El token se emite para uso personal del solicitante.
-- En aplicaciones públicas, los datos deben almacenarse en un servidor propio
-  y no hacerse peticiones directas a los sistemas de REE.
-- Evitar peticiones masivas, redundantes o innecesarias (por ejemplo, datos
-  ya descargados o indicadores inexistentes).
-  
+- En aplicaciones públicas, los datos deben almacenarse en un servidor
+  propio y no hacerse peticiones directas a los sistemas de REE.
+- Evitar peticiones masivas, redundantes o innecesarias (por ejemplo,
+  datos ya descargados o indicadores inexistentes).
 
 ## Authors
 
-* **Manuel Oviedo de la Fuente** [manuel.oviedo@udc.es](mailto:manuel.oviedo@udc.es)
+- **Manuel Oviedo de la Fuente** <manuel.oviedo@udc.es>
 
 # Citation
 
 If you use **esios2fd** in published research, please cite:
 
-> Oviedo de la Fuente, M. (2025). *esios2fd: Download and Convert ESIOS Indicators
-to Functional Data*. R package version 0.1.0.
+> Oviedo de la Fuente, M. (2025). *esios2fd: Download and Convert ESIOS
+> Indicators to Functional Data*. R package version 0.1.0.
 
 ## Acknowledgments
 
-This work was supported by grants from MICINN and the Xunta de Galicia (ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.
-
+This work was supported by grants from MICINN and the Xunta de Galicia
+(ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.
 
 ## References
 
-* Febrero-Bande, M. and Oviedo de la Fuente, M. (2012). Statistical Computing in Functional Data Analysis: The R Package fda.usc. *Journal of Statistical Software*, 51(4):1–28. [https://doi.org/10.18637/jss.v051.i04](https://doi.org/10.18637/jss.v051.i04)
+- Febrero-Bande, M. and Oviedo de la Fuente, M. (2012). Statistical
+  Computing in Functional Data Analysis: The R Package fda.usc. *Journal
+  of Statistical Software*, 51(4):1–28.
+  <https://doi.org/10.18637/jss.v051.i04>
