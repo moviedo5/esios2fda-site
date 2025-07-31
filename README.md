@@ -51,6 +51,7 @@ For more details, visit [https://moviedo5.github.io/esios2fda-site](https://movi
 
 You can install the pre-built Windows binary directly from the GitHub Pages site:
 
+
 ```r
 install.packages(
   "https://github.com/moviedo5/esios2fda-site/raw/main/esios2fd_0.2.0.zip",
@@ -59,11 +60,12 @@ install.packages(
 )
 ```
 
-        
-                        
+You can install last version from the GitHub Pages site (if it is available):
 
-
-
+```r
+# install.packages("remotes")
+remotes::install_github("moviedo5/esios2fd")
+```
 
 ## Fist setps
 
@@ -116,7 +118,7 @@ plot(out2, ylim=c(1e4,35e3), ylab="MWh")
 ```
 
 <div class="figure">
-<img src="docs/figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%" />
+<img src="figures/apagon2025.png" alt="Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025" width="100%" />
 <p class="caption">Forecasted vs. Scheduled Demand — Iberian Blackout April 25-28 2025</p>
 </div>
 
@@ -142,7 +144,7 @@ for (i in 1:length(ldata))
     plot(ldata[[i]])
             
 
-![Forecasted vs. Scheduled Demand\nIberian Blackout April 28 2025](figures/apagon2025.png)
+![Forecasted vs. Scheduled Demand\nIberian Blackout April 25-28 2025](figures/apagon2025.png)
 
 <img src="figures/apagon2025.png" width="100%" />
 -->
@@ -247,14 +249,23 @@ tools::checkRd("man/esios2ldata.Rd")
 tools::checkRd("man/esios2fdata.Rd")
 
 
+
 library(devtools)
 # devtools::build()
+/esios2lfdata sobrea el "hour"
+Character: one of "1min","5min","10min","15min","30min", "hour","1hour","4hour","1day".
+se puede eliminar o probar "1day", vamos que sería coger los datos horario o 4 horarios y agregarlos!
+añadir imagenes estáticas
+
+#shiny
+http://modestya.usc.es:3838/covid19prediction/ para los dygrapha de las series continuas?
+o fda.plot?
 
 
 knitr::knit("README.Rmd", output = "README.md")
 library(pkgdown)
 #pkgdown::clean_site(force = TRUE)
-try(pkgdown::clean_site(force=TRUE), silent=TRUE)
+#try(pkgdown::clean_site(force=TRUE), silent=TRUE) #borra figures/
 pkgdown::build_site()
 
 devtools::build()
@@ -313,34 +324,6 @@ to Functional Data*. R package version 0.1.0.
 This work was supported by grants from MICINN and the Xunta de Galicia (ED431C-2020-14, ED431G-2019/01), co-financed by the ERDF.
 
 
-<!-- 
-# install.packages("roxygen2")
-# install.packages("devtools")
-# install.packages("pkgdown")
-
-library(roxygen2)
-library(devtools)
-# setwd("D:/Users/moviedo/github/fda.usc/")
-
-pkgbuild::compile_dll()
-#roxygenize()
-devtools::document()
-1
-
-tools::checkRd("man/esios2df.Rd")
-tools::checkRd("man/esios2indicators.Rd")
-tools::checkRd("man/esios2lfdata.Rd")
-tools::checkRd("man/esios2csv.Rd")
-tools::checkRd("man/esios2ldata.Rd")
-tools::checkRd("man/esios2fdata.Rd")
-
-
-library(devtools)
-# devtools::build()
-
-
-knitr::knit("README.Rmd", output = "README.md")
--->
 ## References
 
 * Febrero-Bande, M. and Oviedo de la Fuente, M. (2012). Statistical Computing in Functional Data Analysis: The R Package fda.usc. *Journal of Statistical Software*, 51(4):1–28. [https://doi.org/10.18637/jss.v051.i04](https://doi.org/10.18637/jss.v051.i04)

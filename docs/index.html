@@ -93,7 +93,7 @@
 </ul>
 </li>
 </ol>
-<p>For more details, visit the <a href="https://moviedo5.github.io/esios2fd">website</a> of the package.</p>
+<p>For more details, visit <a href="https://moviedo5.github.io/esios2fda-site">https://moviedo5.github.io/esios2fda-site</a> of the package.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -272,14 +272,23 @@ tools::checkRd("man/esios2ldata.Rd")
 tools::checkRd("man/esios2fdata.Rd")
 
 
+
 library(devtools)
 # devtools::build()
+/esios2lfdata sobrea el "hour"
+Character: one of "1min","5min","10min","15min","30min", "hour","1hour","4hour","1day".
+se puede eliminar o probar "1day", vamos que sería coger los datos horario o 4 horarios y agregarlos!
+añadir imagenes estáticas
+
+#shiny
+http://modestya.usc.es:3838/covid19prediction/ para los dygrapha de las series continuas?
+o fda.plot?
 
 
 knitr::knit("README.Rmd", output = "README.md")
 library(pkgdown)
 #pkgdown::clean_site(force = TRUE)
-try(pkgdown::clean_site(force=TRUE), silent=TRUE)
+#try(pkgdown::clean_site(force=TRUE), silent=TRUE) #borra figures/
 pkgdown::build_site()
 
 devtools::build()
